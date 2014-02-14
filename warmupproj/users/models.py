@@ -25,7 +25,7 @@ class User(models.Model):
     ## The maximum length of the passwords
     MAX_PASSWORD_LENGTH = 128
     
-    username = models.CharField(max_length = MAX_USERNAME_LENGTH, primary_key = True)
+    user = models.CharField(max_length = MAX_USERNAME_LENGTH, primary_key = True)
     password = models.CharField(max_length = MAX_PASSWORD_LENGTH)
     count = models.IntegerField(default = 1)
 

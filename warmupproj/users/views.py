@@ -1,55 +1,46 @@
 from django.shortcuts import render
 from warmupproj.users.models import User
+from django.http import HttpResponse
 import json
 
 
 def handleLogin(request, *args, **kwargs):
+    response = {}
+    
     if request.method == 'POST':
-
-
         req = json.loads(request.body)
-        username = req['username']
+        username = req['user']
         password = req['password']
         path = request.path 
 
-
         if path == "/users/login" :
-            try:
-                u = User.objects.get(username = user)
-            except User.DoesNotExist:
-                u = None
-        
-            if u == None: 
+            if User.objects.filter(user=username).exists():
+                u = User.objects.get(user=username)
+                if u.password == password:
+                    u.count += 1
+                    u.save()
+                    response['count'] = u.count
+                else:
+                    err_code = User.ERR_BAD_CREDENTIALS
+            else:
                 return User.ERR_BAD_CREDENTIALS
-
-            if u.password != password:
-                return User.ERR_BAD_CREDENTIALS
-
-            u.count += 1
-            return u.count
-        if path == "users/add" :
-            try:
-                u = User.objects.get(username = user)
-            except User.DoesNotExist:
-                u = None
-           
-            if u != None:
-                return Users.ERR_USER_EXISTS
-
-            def valid_username(username):
-                return username != "" and len(username) <= Users.MAX_USERNAME_LENGTH
-
-            def valid_password(password):
-                return len(password) <= Users.MAX_PASSWORD_LENGTH
             
-            if not valid_username(username):
-                return Users.ERR_BAD_USERNAME
-            if not valid_password(password):
-                return Users.ERR_BAD_PASSWORD
-            
-            u = User.object.create(username=username, password=password)
+            response['err_code'] = err_code
+
+            # return HttpResponse(json.dumps(response), content_type='application/json')
+
+        if path == "users/add":
+
+            if len(username) > User.MAX_USERNAME_LENGTH:
+                err_code = User.ERR_BAD_USERNAME
+            if len(password) > User.MAX_PASSWORD_LENGTH:
+                err_code = User.ERR_BAD_PASSWORD
+
+            u = User.object.create(user=username, password=password)
             u.save()
-            assert u.count == 1
-            return u.count
+            response['err_code'] = err_code
+            response['count'] = u.count
+            
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 
