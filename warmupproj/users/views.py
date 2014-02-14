@@ -16,15 +16,15 @@ def handleLogin(request, *args, **kwargs):
         if path == "/users/login" :
             if User.objects.filter(user__exact=username):
                 print "helloworld"
-                # u = User.objects.filter(user=username, password=password)[0]
-                # if u.password == password:
-                #     u.count += 1
-                #     u.save()
-                #     response['count'] = u.count
-                # else:
-                #     err_code = User.ERR_BAD_CREDENTIALS
+                u = User.objects.filter(user=username, password=password)[0]
+                if u.password == password:
+                    u.count += 1
+                    u.save()
+                    response['count'] = u.count
+                else:
+                    err_code = User.ERR_BAD_CREDENTIALS
             else:
-                return User.ERR_BAD_CREDENTIALS
+                err_code = User.ERR_BAD_CREDENTIALS
             
             response['err_code'] = err_code
 
