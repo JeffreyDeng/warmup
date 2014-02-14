@@ -5,8 +5,6 @@ def handeLogin(request, *args, **kwargs):
 	username = req['username']
 	password = req['password']
 	path = request.path 
-
-
 	if path == "/users/login" :
 		try:
 			u = User.objects.get(username = user)
@@ -29,7 +27,6 @@ def handeLogin(request, *args, **kwargs):
 	   
 	    if u != None:
 	        return Users.ERR_USER_EXISTS
-
 	    def valid_username(username):
 	        return username != "" and len(username) <= Users.MAX_USERNAME_LENGTH
 
@@ -41,7 +38,6 @@ def handeLogin(request, *args, **kwargs):
 	    if not valid_password(password):
 	        return Users.ERR_BAD_PASSWORD
 	    
-	    u = User.object.create(username=username, password=password)
 	    assert u.count == 1
     	return u.count
 
