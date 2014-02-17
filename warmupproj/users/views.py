@@ -26,20 +26,24 @@ def handleLogin(request, *args, **kwargs):
             else:
                 err_code = User.ERR_BAD_CREDENTIALS
             
-            response['err_code'] = err_code
+            response['errCode'] = err_code
 
             # return HttpResponse(json.dumps(response), content_type='application/json')
 
         if path == "users/add":
 
+            if User.objects.filter(user__exact=username):
+                err_code = User.ERR_USER_EXISTS
             if len(username) > User.MAX_USERNAME_LENGTH:
+                err_code = User.ERR_BAD_USERNAME
+            if username == "":
                 err_code = User.ERR_BAD_USERNAME
             if len(password) > User.MAX_PASSWORD_LENGTH:
                 err_code = User.ERR_BAD_PASSWORD
 
             u = User.object.create(user=username, password=password)
             u.save()
-            response['err_code'] = err_code
+            response['errCode'] = err_code
             response['count'] = u.count
             
     return HttpResponse(json.dumps(response), content_type='application/json')
